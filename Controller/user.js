@@ -1,5 +1,6 @@
 const User = require("../Models/user");
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // How we register user in mongodb ?
 async function registerUser(req, res) {
@@ -37,6 +38,54 @@ async function registerUser(req, res) {
     }
 }
 
+async function loginUser(req, res) {
+    // Incoming data from the request
+    const { email, password } = req.body;
+
+    
+    if (!email || !password) {
+        return res.status(500).json({
+            message: "Missing values either email, password"
+        })
+    }
+
+    const foundUser = await User.findOne({ email });
+
+    if (foundUser) {
+        // proceed further
+        const matchPassword = await bcrypt.compare(password, foundUser.password);
+
+        if (matchPassword) {
+            // Proceed further
+
+            const accessToken = jwt.sign(
+                {
+                    name: foundUser.name,
+                    email: foundUser.email
+                },
+                process.env.SECRET_KEY
+            );
+
+            return res.status(200).json({
+                token: accessToken,
+                data: foundUser,
+                message: "User succesfully logged in."
+            })
+
+        } else {
+            return res.status(401).json({
+                message: "User credentials incorrect"
+            })
+        }
+
+    } else {
+        return res.status(404).json({
+            message: "User doens't exist"
+        })
+    }
+}
+
 module.exports = {
-    registerUser
+    registerUser,
+    loginUser
 }
