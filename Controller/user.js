@@ -107,8 +107,34 @@ async function getAllUsers(req, res) {
     }
 }
 
+async function getUserById(req, res) {
+    const userId = req.params.id;
+    const foundUser = await User.findById(userId);
+
+    if (!foundUser) {
+        return res.status(404).json({
+            message: "User not found"
+        })
+    
+    }
+
+    const filteredUser = {
+        name: foundUser.name,
+        email: foundUser.email,
+        id: foundUser._id,
+        createdAt: foundUser.createdAt
+    }
+
+    return res.status(200).json({
+        message: "User fetched succesfully",
+        data: filteredUser
+    })
+
+}
+
 module.exports = {
     registerUser,
     loginUser,
-    getAllUsers
+    getAllUsers,
+    getUserById
 }
