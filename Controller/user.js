@@ -85,7 +85,30 @@ async function loginUser(req, res) {
     }
 }
 
+async function getAllUsers(req, res) {
+    try {
+        const allUsers = await User.find();
+        const filteredUsersWithoutPassword = allUsers.map((user) => {
+            return {
+                name: user.name,
+                email: user.email,
+                id: user._id,
+                createdAt: user.createdAt
+            }
+        }) 
+
+        return res.status(200).json({
+            message: "Succesfully fetched users",
+            data: filteredUsersWithoutPassword
+        })
+
+    } catch (error) {
+
+    }
+}
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getAllUsers
 }
