@@ -1,6 +1,7 @@
 const User = require("../Models/user");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { isValidObjectId } = require("../util/util");
 
 // How we register user in mongodb ?
 async function registerUser(req, res) {
@@ -109,6 +110,13 @@ async function getAllUsers(req, res) {
 
 async function getUserById(req, res) {
     const userId = req.params.id;
+
+    if (!isValidObjectId(userId)) {
+        return res.status(500).json({
+            message: 'Invalid user id'
+        })
+    }
+
     const foundUser = await User.findById(userId);
 
     if (!foundUser) {
