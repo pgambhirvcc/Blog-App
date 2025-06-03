@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Blog = require('../Models/blog');
 const User = require('../Models/user');
+const { isValidObjectId } = require('../util/util');
 
 async function createBlog(req, res) {
     const blogInfoToBeCreated = req.body;
@@ -48,7 +49,32 @@ async function GetAllBlogs(req, res) {
     })
 }
 
+async function DeleteBlog(req, res) {
+    const blogId = req.params.id;
+
+    if (!isValidObjectId(blogId)) {
+        return res.status(500).json({
+            message: 'Invalid blog id'
+        })
+    }
+
+    try {
+        const isDeleted = await Blog.findByIdAndDelete(blogId);
+        if (isDeleted) {
+            return res.status(200).json({
+                message: "Blog succesfully deleted"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error
+        })
+    }
+}
+
 module.exports = {
     createBlog,
-    GetAllBlogs
+    GetAllBlogs,
+    DeleteBlog
 }
