@@ -38,7 +38,9 @@ async function createBlog(req, res) {
 }
 
 async function GetAllBlogs(req, res) {
-    const allBlogs = await Blog.find();
+    const allBlogs = await Blog.find().populate({
+        path: 'author'
+    });
 
     return res.status(200).json({
         message: 'Succesfully fetched all blogs',
