@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 4000;
 const mongoose = require('mongoose');
 const morgan = require('morgan');
 const UserRoutes = require('./Routes/user');
+const BlogRoutes = require('./Routes/blog');
 
 require('dotenv').config();
 
@@ -16,6 +17,9 @@ app.use(express.json());
 
 // User specific API's
 app.use('/api/user', UserRoutes);
+
+// Blog specific API's
+app.use('/api/blog', BlogRoutes);
 
 mongoose.connect(process.env.MONGO_URL).then(() => {
     console.log('Database connected....');
