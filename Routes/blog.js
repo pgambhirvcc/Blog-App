@@ -8,4 +8,6 @@ Router.post('/create', validateToken, BlogController.createBlog)
 
 Router.get('/all', validateToken, BlogController.GetAllBlogs);
 
+Router.delete('/:id', validateToken, BlogController.DeleteBlog);
+
 module.exports = Router;
