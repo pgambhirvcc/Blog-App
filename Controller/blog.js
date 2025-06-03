@@ -3,32 +3,6 @@ const Blog = require('../Models/blog');
 const User = require('../Models/user');
 
 async function createBlog(req, res) {
-    const allHeaders = req.headers;
-    const token = allHeaders.authorization;
-
-    if (!token) {
-        return res.status(401).json({
-            message: "You are not authorized to create a blog"
-        })
-    }
-
-    const decodedToken = jwt.decode(token, { complete: true })
-    
-    if (!decodedToken) {
-        return res.status(401).json({
-            message: "You are not authorized to create a blog"
-        })
-    }
-
-    const userEmailFromToken = decodedToken.payload.email;
-    const foundUser = await User.findOne({ email: userEmailFromToken });
-    
-    if (!foundUser) {
-        return res.status(401).json({
-            message: "You are not authorized to create a blog"
-        })
-    }
-
     const blogInfoToBeCreated = req.body;
     const title = blogInfoToBeCreated.title;
     const image = blogInfoToBeCreated.image;
@@ -38,7 +12,6 @@ async function createBlog(req, res) {
             message: 'Blog title or Image is missing'
         })
     }
-
 
     try {
         const newBlog = new Blog({
@@ -64,6 +37,18 @@ async function createBlog(req, res) {
 
 }
 
+async function GetAllBlogs(req, res) {
+    const allBlogs = await Blog.find().populate({
+        path: 'author'
+    });
+
+    return res.status(200).json({
+        message: 'Succesfully fetched all blogs',
+        data: allBlogs
+    })
+}
+
 module.exports = {
-    createBlog
+    createBlog,
+    GetAllBlogs
 }
